@@ -45,7 +45,7 @@ enum Version : u8 {
 struct Header {
     char magic[4] [[name("Magic"), comment("MOC3 magic string: 'MOC3'")]];
     Version version [[name("Version"), comment("MOC3 version")]];
-    bool isLittleEndian [[name("Big Endian"), comment("MOC3 endianness")]];
+    bool isBigEndian [[name("Big Endian"), comment("MOC3 endianness")]];
     padding[58];
 } [[static]];
 
