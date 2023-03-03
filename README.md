@@ -4,8 +4,8 @@
 
 This repository contains a simple Live2D model that crashes any application
 that attempts to load it: a denial of service attack. If you have the
-ImHex hex editor installed, you can inspect and edit the MOC3 file with
-the pattern file in `src/moc3.hexpat`.
+[ImHex hex editor](https://imhex.werwolv.net) installed, you can inspect and
+edit the MOC3 file with the pattern file in `src/moc3.hexpat`.
 
 The included files can also be used as a template for further research and
 experimentation.
