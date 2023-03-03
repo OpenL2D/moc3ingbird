@@ -38,6 +38,10 @@ model, and instantly crash.
 If you attach a debugger to the crashing application, you should see the
 EXCEPTION_ACCESS_VIOLATION exception, SIGSEGV, or some other equivalent.
 
+The `src/moc3.hexpat` pattern supports all MOC3 files. Some examples may be
+found at <https://live2d.com/en/download/sample-data/>. Please note those
+examples are copyrighted by Live2D Inc. and may come with extra restrictions.
+
 ## License
 
 Copyright © 2023 The OpenL2D Project Developers. All rights reserved.
