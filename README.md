@@ -23,8 +23,8 @@ almost certainly possible to execute arbitrary code this way.
 
 ## Demonstration
 
-**Direct ZIP download for the MOC3ingbird model (this repository): [click here]
-(https://github.com/OpenL2D/moc3ingbird/archive/refs/heads/master.zip).**
+**Direct ZIP download for the MOC3ingbird model (this repository): [click here](
+https://github.com/OpenL2D/moc3ingbird/archive/refs/heads/master.zip).**
 
 If you have Live2D's
 [Cubism Editor (and Viewer)](https://www.live2d.com/en/download/cubism/) or
