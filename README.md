@@ -5,7 +5,7 @@
 This repository contains a simple Live2D model that crashes any application
 that attempts to load it: a denial of service attack. If you have the
 ImHex hex editor installed, you can inspect and edit the MOC3 file with
-the pattern file in `src/moc3_v2.hexpat`.
+the pattern file in `src/moc3.hexpat`.
 
 The included files can also be used as a template for further research and
 experimentation.
@@ -20,6 +20,23 @@ Cubism Core is a C library that makes no attempts to perform bounds checking
 on offsets contained within MOC3 files. As a result, it is trivial to read
 and write memory out of the bounds of the MOC3 data in memory, and it is
 almost certainly possible to execute arbitrary code this way.
+
+## Demonstration
+
+**Direct ZIP download for the MOC3ingbird model (this repository): [click here]
+(https://github.com/OpenL2D/moc3ingbird/archive/refs/heads/master.zip).**
+
+If you have Live2D's
+[Cubism Editor (and Viewer)](https://www.live2d.com/en/download/cubism/) or
+any other software that can load Live2D models, simply open the `exploit.moc3`
+file with it.
+
+For the viewer bundled with the Live2D Cubism Editor, you can download this
+repository, and drag `exploit.moc3` into the viewer. It will begin to load the
+model, and instantly crash.
+
+If you attach a debugger to the crashing application, you should see the
+EXCEPTION_ACCESS_VIOLATION exception, SIGSEGV, or some other equivalent.
 
 ## License
 
