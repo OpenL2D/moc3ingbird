@@ -28,6 +28,10 @@ on offsets contained within MOC3 files. As a result, it is trivial to read
 and write memory out of the bounds of the MOC3 data in memory, and it is
 almost certainly possible to execute arbitrary code this way.
 
+**As of now, I have not found a way to achieve code execution using Cubism
+Core alone; however, code execution may still be possible by taking advantage
+of the host program's (e.g. Cubism Viewer, VTube Studio, etc.) memory layout.**
+
 ## Demonstration
 
 **Direct ZIP download for the MOC3ingbird model (this repository): [click here](

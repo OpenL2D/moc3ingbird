@@ -1,0 +1,2 @@
+*.pat linguist-language=C++
+*.hexpat linguist-language=C++
