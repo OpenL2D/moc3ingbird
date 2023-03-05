@@ -6,9 +6,10 @@ This repository contains a simple Live2D model that crashes any application
 that attempts to load it: a denial of service attack. If you have the
 [ImHex hex editor](https://imhex.werwolv.net) installed, you can inspect and
 edit the MOC3 file with the pattern file in `src/moc3.hexpat`. Please note
-you will need to change the `0x7FFFFFFF` (`FF FF FF 7F`) offset value near
-the beginning of the file to something sane (`0`) to be able to see the
-pattern data.
+you will need to change the `0x7FFFFFFF` (`FF FF FF 7F`) runtime space
+offset value near the beginning of the file to something sane (`0`) to be
+able to see the pattern data. Alternatively you can enable
+`ShowRuntimeSpaceFields` from the Settings tab.
 
 **`src/moc3.hexpat` should be able to view all MOC3 files. If you find one
 that it can't view, please file an issue and we'll look into it.**
