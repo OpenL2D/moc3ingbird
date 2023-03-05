@@ -32,9 +32,9 @@
 #endif
 
 #ifndef NO_BIG_ENDIAN_SUPPORT
-// Experimental big endian MOC3 support. Setting the following to
-// true will ensure that MOC3 files are always read as big endian,
-// otherwise endianness will be autodetected.
+    // Experimental big endian MOC3 support. Setting the following to
+    // true will ensure that MOC3 files are always read as big endian,
+    // otherwise endianness will be autodetected.
     bool AlwaysReadAsBigEndian in;
 #endif
 
@@ -47,9 +47,9 @@
 bool ShowRuntimeSpaceFields in;
 
 #ifndef NO_VERIFICATION
-// If you want to fully verify the integrity of the MOC3 data, set the
-// following to true. THIS IS AN EXPERIMENTAL FEATURE AND MAY NOT BE
-// FULLY ACCURATE.
+    // If you want to fully verify the integrity of the MOC3 data, set the
+    // following to true. THIS IS AN EXPERIMENTAL FEATURE AND MAY NOT BE
+    // FULLY ACCURATE.
     #ifndef ALWAYS_ENABLE_VERIFICATION
         bool EnableVerification in;
     #endif
@@ -549,3 +549,4 @@ SectionOffsetTable<header.version> sections @ 0x40 [[name("Section Offset Table"
                           addressof(sections.warpDeformers.keyformSourcesCounts), cI.warpDeformers, cI.warpDeformerKeyforms);
     }
 #endif
+
