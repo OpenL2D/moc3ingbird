@@ -22,14 +22,23 @@
 
 #pragma MIME application/x-moc3-data
 
-// We won't support big-endian MOC3 files. 
-#pragma endian little
-
 // MOC3 files can contain large arrays of coordinates.
 // Do NOT increase pattern_limit; that's usually a sign the data structure
 // should be marked [[static]] instead.
 #ifndef MOC3_NO_SET_ARRAY_LIMIT
 #pragma array_limit 1048576
+#endif
+
+#ifndef NO_BIG_ENDIAN_SUPPORT
+// Experimental big endian MOC3 support. Setting the following to
+// true will ensure that MOC3 files are always read as big endian,
+// otherwise endianness will be autodetected.
+bool AlwaysReadAsBigEndian in;
+
+#endif
+
+#ifdef NO_BIG_ENDIAN_SUPPORT
+  #pragma endian little
 #endif
 
 // If you are interested in modifying Runtime Space fields, set the
@@ -445,6 +454,16 @@ struct SectionOffsetTable<auto V> {
 };
 
 Header header @ 0x0 [[name("MOC3 Header")]];
+#ifndef NO_BIG_ENDIAN_SUPPORT
+    #include <std/core.pat>
+    #include <std/mem.pat>
+    if (AlwaysReadAsBigEndian || header.isBigEndian) {
+        std::core::set_endian(std::mem::Endian::Big);
+    } else {
+        std::core::set_endian(std::mem::Endian::Little);
+    }
+#endif
+
 SectionOffsetTable<header.version> sections @ 0x40 [[name("Section Offset Table")]];
 
 
