@@ -11,15 +11,15 @@
  * for more details.
  */
  
- /*
-  * This pattern has not been fully verified for correctness. Use at your
-  * own risk.
-  *
-  * == Change Log ==
-  * 2.0 - Initial implementation as a pattern.
-  * 2.0a - Support for latest MOC3 features (experimental).
-  */
-  
+/*
+ * This pattern has not been fully verified for correctness. Use at your
+ * own risk.
+ *
+ * == Change Log ==
+ * 2.0 - Initial implementation as a pattern.
+ * 2.0a - Support for latest MOC3 features (experimental).
+ */
+
 #pragma MIME application/x-moc3-data
 
 // We won't support big-endian MOC3 files. 
@@ -31,7 +31,11 @@
 #ifndef MOC3_NO_SET_ARRAY_LIMIT
 #pragma array_limit 1048576
 #endif
-  
+
+// If you are interested in modifying Runtime Space fields, set the
+// following to true.
+bool ShowRuntimeSpaceFields in;
+
 using void = u8;
 using bool32 = u32;
 
@@ -115,7 +119,10 @@ struct XY {
 } [[static]];
 
 struct PartOffsets<auto N> {
-    void* runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
+    if (ShowRuntimeSpaceFields)
+        u32 runtimeSpace0 [[name("Runtime Space 0 Offset")]];
+    else
+        void* runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
     ID* ids[N] : u32 [[name("IDs")]];
     s32* keyformBindingSourcesIndices[N] : u32 [[name("Keyform Binding Sources Indices")]];
     s32* keyformSourcesBeginIndices[N] : u32 [[name("Keyform Sources Begin Indices")]];
@@ -126,7 +133,10 @@ struct PartOffsets<auto N> {
 };
 
 struct DeformerOffsets<auto N> {
-    void* runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
+    if (ShowRuntimeSpaceFields)
+        u32 runtimeSpace0 [[name("Runtime Space 0 Offset")]];
+    else
+        void* runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
     ID* ids[N] : u32 [[name("IDs")]];
     s32* keyformBindingSourcesIndices[N] : u32 [[name("Keyform Binding Sources Indices")]];
     bool32* isVisible[N] : u32 [[name("Visible")]];
@@ -161,10 +171,17 @@ bitfield DrawableFlags {
 };
 
 struct ArtMeshOffsets<auto N> {
-    void* runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
-    void* runtimeSpace1[N * 8] : u32 [[name("Runtime Space 1"), hidden]];
-    void* runtimeSpace2[N * 8] : u32 [[name("Runtime Space 2"), hidden]];
-    void* runtimeSpace3[N * 8] : u32 [[name("Runtime Space 3"), hidden]];
+    if (ShowRuntimeSpaceFields) {
+        u32 runtimeSpace0 [[name("Runtime Space 0 Offset")]];
+        u32 runtimeSpace1 [[name("Runtime Space 1 Offset")]];
+        u32 runtimeSpace2 [[name("Runtime Space 2 Offset")]];
+        u32 runtimeSpace3 [[name("Runtime Space 3 Offset")]];
+    } else {
+        void* runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
+        void* runtimeSpace1[N * 8] : u32 [[name("Runtime Space 1"), hidden]];
+        void* runtimeSpace2[N * 8] : u32 [[name("Runtime Space 2"), hidden]];
+        void* runtimeSpace3[N * 8] : u32 [[name("Runtime Space 3"), hidden]];
+    }
     ID* ids[N] : u32 [[name("IDs")]];
     s32* keyformBindingSourcesIndices[N] : u32 [[name("Keyform Binding Sources Indices")]];
     s32* keyformSourcesBeginIndices[N] : u32 [[name("Keyform Sources Begin Indices")]];
@@ -184,7 +201,10 @@ struct ArtMeshOffsets<auto N> {
 };
 
 struct ParameterOffsets<auto N> {
-    void* runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
+    if (ShowRuntimeSpaceFields)
+        u32 runtimeSpace0 [[name("Runtime Space 0 Offset")]];
+    else
+        void* runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
     ID* ids[N] : u32 [[name("IDs")]];
     float* maxValues[N] : u32 [[name("Max Values")]];
     float* minValues[N] : u32 [[name("Min Values")]];
@@ -274,7 +294,10 @@ struct DrawOrderGroupObjectOffsets<auto N> {
 };
 
 struct GlueOffsets<auto N> {
-    void *runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
+    if (ShowRuntimeSpaceFields)
+        u32 runtimeSpace0 [[name("Runtime Space 0 Offset")]];
+    else
+        void* runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
     ID* IDs[N] : u32 [[name("IDs")]];
     s32* keyformBindingSourcesIndices[N] : u32 [[name("Keyform Binding Sources Indices")]];
     s32* keyformSourcesBeginIndices[N] : u32 [[name("Keyform Sources Begin Indices")]];
@@ -299,7 +322,10 @@ struct WarpDeformerKeyformOffsetsV3_3<auto N> {
 };
 
 struct ParameterExtensionOffsets<auto N> {
-    void* runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
+    if (ShowRuntimeSpaceFields)
+        u32 runtimeSpace0 [[name("Runtime Space 0")]];
+    else
+        void* runtimeSpace0[N * 8] : u32 [[name("Runtime Space 0"), hidden]];
     s32* keysSourcesBeginIndices[N] : u32 [[name("Keys Sources Begin Indices")]];
     s32* keysSourcesCounts[N] : u32 [[name("Keys Sources Counts")]];
 };

@@ -5,7 +5,13 @@
 This repository contains a simple Live2D model that crashes any application
 that attempts to load it: a denial of service attack. If you have the
 [ImHex hex editor](https://imhex.werwolv.net) installed, you can inspect and
-edit the MOC3 file with the pattern file in `src/moc3.hexpat`.
+edit the MOC3 file with the pattern file in `src/moc3.hexpat`. Please note
+you will need to change the `0x7FFFFFFF` (`FF FF FF 7F`) offset value near
+the beginning of the file to something sane (`0`) to be able to see the
+pattern data.
+
+**`src/moc3.hexpat` should be able to view all MOC3 files. If you find one
+that it can't view, please file an issue and we'll look into it.**
 
 The included files can also be used as a template for further research and
 experimentation.
@@ -38,9 +44,9 @@ model, and instantly crash.
 If you attach a debugger to the crashing application, you should see the
 EXCEPTION_ACCESS_VIOLATION exception, SIGSEGV, or some other equivalent.
 
-The `src/moc3.hexpat` pattern supports all MOC3 files. Some examples may be
+The `src/moc3.hexpat` pattern supports all MOC3 files. Some samples may be
 found at <https://live2d.com/en/download/sample-data/>. Please note those
-examples are copyrighted by Live2D Inc. and may come with extra restrictions.
+samples are copyrighted by Live2D Inc. and may come with extra restrictions.
 
 ## License
 
