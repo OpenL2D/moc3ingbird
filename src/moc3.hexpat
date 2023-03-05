@@ -1,5 +1,5 @@
 /*
- * MOC3 Format Specification, 2.0a
+ * MOC3 Format Specification, 2.0c
  *
  * Copyright (C) 2023 The OpenL2D Project Developers
  *
@@ -19,6 +19,7 @@
  * 2.0 - Initial implementation as a pattern.
  * 2.0a - Support for latest MOC3 features (experimental).
  * 2.0b - Experimental support for verification.
+ * 2.0c - New FIXUP attribute to support more MOC3 files.
  */
 
 #pragma MIME application/x-moc3-data
