@@ -510,10 +510,13 @@ SectionOffsetTable<header.version> sections @ 0x40 [[name("Section Offset Table"
 
 #ifndef NO_VERIFICATION
     #include <std/sys.pat>
+    #include <std/string.pat>
     fn checkIndices(u128 indices, u32 count, u32 len) {
         s32 iV[count] @ indices;
         for (u32 i = 0, i < count, i += 1) {
-            std::assert((iV[i] > -2 && iV[i] < len), "Out of bounds index");
+            std::assert((iV[i] > -2 && iV[i] < len), "Out of bounds index: " +
+                std::string::to_string(i) + "] = (" + std::string::to_string(iV[i]) + ") of (" +
+                std::string::to_string(indices) + ")");
         }
     };
     
@@ -521,8 +524,12 @@ SectionOffsetTable<header.version> sections @ 0x40 [[name("Section Offset Table"
         s32 iV[count] @ indices;
         s32 iC[count] @ counts;
         for (u32 i = 0, i < count, i += 1) {
-            std::assert((iV[i] > -2 && (iV[i] + iC[i]) < len), "Out of bounds begin index");
-            std::assert(iC[i] >= 0 && iC[i] < len, "Out of bounds count");
+            std::assert((iV[i] > -2 && (iV[i] + iC[i]) <= len), "Out of bounds begin index: [" +
+                std::string::to_string(i) + "] = (" + std::string::to_string(iV[i]) + ", " + std::string::to_string(iC[i]) +
+                ") of (" + std::string::to_string(indices) + "," + std::string::to_string(counts) + ")");
+            std::assert(iC[i] >= 0 && iC[i] < len, "Out of bounds count: [" +
+                std::string::to_string(i) + "] = (" + std::string::to_string(iV[i]) + ", " + std::string::to_string(iC[i]) +
+                ") of (" + std::string::to_string(indices) + "," + std::string::to_string(counts) + ")");
         }
     };
     
@@ -539,6 +546,6 @@ SectionOffsetTable<header.version> sections @ 0x40 [[name("Section Offset Table"
         
         checkIndices(addressof(sections.warpDeformers.keyformBindingSourcesIndices), cI.warpDeformers, cI.keyformBindings);
         checkBeginIndices(addressof(sections.warpDeformers.keyformSourcesBeginIndices), 
-                          addressof(sections.warpDeformers.keyformSourcesCounts), cI.warpDeformers, cI.partKeyforms);
+                          addressof(sections.warpDeformers.keyformSourcesCounts), cI.warpDeformers, cI.warpDeformerKeyforms);
     }
 #endif
