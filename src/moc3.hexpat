@@ -18,6 +18,7 @@
  * == Change Log ==
  * 2.0 - Initial implementation as a pattern.
  * 2.0a - Support for latest MOC3 features (experimental).
+ * 2.0b - Experimental support for verification.
  */
 
 #pragma MIME application/x-moc3-data
@@ -33,17 +34,30 @@
 // Experimental big endian MOC3 support. Setting the following to
 // true will ensure that MOC3 files are always read as big endian,
 // otherwise endianness will be autodetected.
-bool AlwaysReadAsBigEndian in;
-
+    bool AlwaysReadAsBigEndian in;
 #endif
 
 #ifdef NO_BIG_ENDIAN_SUPPORT
-  #pragma endian little
+    #pragma endian little
 #endif
 
 // If you are interested in modifying Runtime Space fields, set the
 // following to true.
 bool ShowRuntimeSpaceFields in;
+
+#ifndef NO_VERIFICATION
+// If you want to fully verify the integrity of the MOC3 data, set the
+// following to true. THIS IS AN EXPERIMENTAL FEATURE AND MAY NOT BE
+// FULLY ACCURATE.
+    #ifndef ALWAYS_ENABLE_VERIFICATION
+        bool EnableVerification in;
+    #endif
+#endif
+
+#ifdef ALWAYS_ENABLE_VERIFICATION
+    bool EnableVerification out;
+    EnableVerification = true;
+#endif
 
 using void = u8;
 using bool32 = u32;
@@ -466,4 +480,37 @@ Header header @ 0x0 [[name("MOC3 Header")]];
 
 SectionOffsetTable<header.version> sections @ 0x40 [[name("Section Offset Table")]];
 
-
+#ifndef NO_VERIFICATION
+    #include <std/sys.pat>
+    fn checkIndices(u128 indices, u32 count, u32 len) {
+        s32 iV[count] @ indices;
+        for (u32 i = 0, i < count, i += 1) {
+            std::assert((iV[i] > -2 && iV[i] < len), "Out of bounds index");
+        }
+    };
+    
+    fn checkBeginIndices(u128 indices, u128 counts, u32 count, u32 len) {
+        s32 iV[count] @ indices;
+        s32 iC[count] @ counts;
+        for (u32 i = 0, i < count, i += 1) {
+            std::assert((iV[i] > -2 && (iV[i] + iC[i]) < len), "Out of bounds begin index");
+            std::assert(iC[i] >= 0 && iC[i] < len, "Out of bounds count");
+        }
+    };
+    
+    if (EnableVerification) {
+        CountInfoTable<header.version> cI = sections.countInfo;
+        checkIndices(addressof(sections.parts.keyformBindingSourcesIndices), cI.parts, cI.keyformBindings);
+        checkBeginIndices(addressof(sections.parts.keyformSourcesBeginIndices), 
+                          addressof(sections.parts.keyformSourcesCounts), cI.parts, cI.partKeyforms);
+        
+        checkIndices(addressof(sections.deformers.keyformBindingSourcesIndices), cI.deformers, cI.keyformBindings);
+        checkIndices(addressof(sections.deformers.parentPartIndices), cI.deformers, cI.parts);
+        checkIndices(addressof(sections.deformers.parentDeformerIndices), cI.deformers, cI.deformers);
+        // TODO: sections.deformers.specificSourcesIndices (not sure how)
+        
+        checkIndices(addressof(sections.warpDeformers.keyformBindingSourcesIndices), cI.warpDeformers, cI.keyformBindings);
+        checkBeginIndices(addressof(sections.warpDeformers.keyformSourcesBeginIndices), 
+                          addressof(sections.warpDeformers.keyformSourcesCounts), cI.warpDeformers, cI.partKeyforms);
+    }
+#endif
