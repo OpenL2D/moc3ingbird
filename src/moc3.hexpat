@@ -87,7 +87,7 @@ using bool32 = u32;
 #endif
 
 #ifdef NO_OFFSET_FIXUP
-    #define FIXUP
+    #define FIXUP dummy
 #endif
 
 enum Version : u8 {
