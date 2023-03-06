@@ -47,7 +47,9 @@ repository, and drag `exploit.moc3` into the viewer. It will begin to load the
 model, and instantly crash.
 
 If you attach a debugger to the crashing application, you should see the
-EXCEPTION_ACCESS_VIOLATION exception, SIGSEGV, or some other equivalent.
+EXCEPTION_ACCESS_VIOLATION exception, SIGSEGV, or some other equivalent. The
+current PoC writes a pointer to `moc3BaseAddress + sections.parts.runtimeSpace0`
+with the value `moc3BaseAddress + sections.parts.ids`.
 
 The `src/moc3.hexpat` pattern supports all MOC3 files. Some samples may be
 found at <https://live2d.com/en/download/sample-data/>. Please note those
