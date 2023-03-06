@@ -446,6 +446,8 @@ struct BlendShapeConstraintValueOffsets<auto N> {
 };
 
 struct SectionOffsetTable<auto V> {
+    padding[0x280] [[no_unique_address]];
+
     CountInfoTable<V>* countInfo : u32 [[name("Count Info Table")]];
     CanvasInfo* canvasInfo : u32 [[name("Canvas Info")]];
     
@@ -495,6 +497,10 @@ struct SectionOffsetTable<auto V> {
     }
 };
 
+struct RuntimeAddressMap {
+    void runtimeData[0x480] [[name("Runtime Data (Overwritten at Load Time)"), comment("Do not put data here.")]];
+};
+
 Header header @ 0x0 [[name("MOC3 Header")]];
 #ifndef NO_BIG_ENDIAN_SUPPORT
     #include <std/core.pat>
@@ -507,6 +513,7 @@ Header header @ 0x0 [[name("MOC3 Header")]];
 #endif
 
 SectionOffsetTable<header.version> sections @ 0x40 [[name("Section Offset Table")]];
+RuntimeAddressMap runtimeAddressMap @ 0x2c0 [[name("Runtime Address Map")]];
 
 #ifndef NO_VERIFICATION
     #include <std/sys.pat>
@@ -549,4 +556,5 @@ SectionOffsetTable<header.version> sections @ 0x40 [[name("Section Offset Table"
                           addressof(sections.warpDeformers.keyformSourcesCounts), cI.warpDeformers, cI.warpDeformerKeyforms);
     }
 #endif
+
 
