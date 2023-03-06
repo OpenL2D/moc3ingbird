@@ -7,7 +7,6 @@ English version: [README.md](README.md)
 * Live2D Inc.がセキュリティに態度を改めるべしです。
 * Live2D Cubism CoreはMOC3のファイルを読むための唯一の方法ですけど、安全じゃないです。
 * Out-of-bounds memory writeなどの多い脆弱性があります。
-* マルウェアを実行するのが簡単だと思います。
 * このモデルとImHex patternのファイルを自由に使います。
 
 ## ライセンス
