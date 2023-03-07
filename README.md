@@ -54,6 +54,8 @@ with the value `moc3BaseAddress + sections.parts.ids`.
 The `src/moc3.hexpat` pattern supports all MOC3 files. Some samples may be
 found at <https://live2d.com/en/download/sample-data/>. Please note those
 samples are copyrighted by Live2D Inc. and may come with extra restrictions.
+**The OpenL2D Project Developers are not responsible for ensuring the
+compliance of users of the software with any third-party agreements.**
 
 ## License
 
