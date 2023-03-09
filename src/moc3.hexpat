@@ -183,6 +183,11 @@ struct PartOffsets<auto N> {
     s32* parentPartIndices[N] : u32 [[name("Parent Part Indices"), FIXUP]];
 };
 
+enum DeformerType : u32 {
+    WARP = 0,
+    ROTATION = 1,
+};
+
 struct DeformerOffsets<auto N> {
     if (ShowRuntimeSpaceFields)
         u32 runtimeSpace0 [[name("Runtime Space 0 Offset")]];
@@ -194,7 +199,7 @@ struct DeformerOffsets<auto N> {
     bool32* isEnabled[N] : u32 [[name("Enabled"), FIXUP]];
     s32* parentPartIndices[N] : u32 [[name("Parent Part Indices"), FIXUP]];
     s32* parentDeformerIndices[N] : u32 [[name("Parent Deformer Indices"), FIXUP]];
-    u32* types[N] : u32 [[name("Types"), FIXUP]];
+    DeformerType* types[N] : u32 [[name("Types"), FIXUP]];
     s32* specificSourcesIndices[N] : u32 [[name("Specific Sources Indices"), FIXUP]];
 };
 
@@ -556,5 +561,6 @@ RuntimeAddressMap runtimeAddressMap @ 0x2c0 [[name("Runtime Address Map")]];
                           addressof(sections.warpDeformers.keyformSourcesCounts), cI.warpDeformers, cI.warpDeformerKeyforms);
     }
 #endif
+
 
 
