@@ -1,5 +1,5 @@
 /*
- * MOC3 Format Specification, 2.0c
+ * MOC3 Format Specification, 2.1
  *
  * Copyright (C) 2023 The OpenL2D Project Developers
  *
@@ -20,6 +20,7 @@
  * 2.0a - Support for latest MOC3 features (experimental).
  * 2.0b - Experimental support for verification.
  * 2.0c - New FIXUP attribute to support more MOC3 files.
+ * 2.1 - Support for version 5 MOC3 features.
  */
 
 #pragma MIME application/x-moc3-data
@@ -45,20 +46,6 @@
 // If you are interested in modifying Runtime Space fields, set the
 // following to true.
 bool ShowRuntimeSpaceFields in;
-
-#ifndef NO_VERIFICATION
-    // If you want to fully verify the integrity of the MOC3 data, set the
-    // following to true. THIS IS AN EXPERIMENTAL FEATURE AND MAY NOT BE
-    // FULLY ACCURATE.
-    #ifndef ALWAYS_ENABLE_VERIFICATION
-        bool EnableVerification in;
-    #endif
-#endif
-
-#ifdef ALWAYS_ENABLE_VERIFICATION
-    bool EnableVerification out;
-    EnableVerification = true;
-#endif
 
 using void = u8;
 using bool32 = u32;
@@ -95,6 +82,7 @@ enum Version : u8 {
     V3_03_00 = 2,
     V4_00_00 = 3,
     V4_02_00 = 4,
+    V5_00_00 = 5,
 } [[comment("MOC3 version")]];
 
 struct Header {
@@ -105,7 +93,8 @@ struct Header {
 } [[static]];
 
 bitfield CanvasFlags {
-    unknown : 8;
+    reverseYCoordinate : 1;
+    reserved : 7;
 };
 
 struct CanvasInfo {
@@ -119,6 +108,11 @@ struct CanvasInfo {
 } [[static]];
 
 struct CountInfoTable<auto V> {
+    if (V >= Version::V5_00_00)
+        padding[128] [[no_unique_address]];
+    else
+        padding[256] [[no_unique_address]];
+
     u32 parts [[name("Parts")]];
     u32 deformers [[name("Deformers")]];
     u32 warpDeformers [[name("Warp Deformers")]];
@@ -153,6 +147,12 @@ struct CountInfoTable<auto V> {
         u32 blendShapeConstraintIndices [[name("Blend Shape Constraint Indices")]];
         u32 blendShapeConstraints [[name("Blend Shape Constraints")]];
         u32 blendShapeConstraintValues [[name("Blend Shape Constraint Values")]];
+    }
+
+    if (V >= Version::V5_00_00) {
+        u32 blendShapesParts [[name("Blend Shapes (Parts)")]];
+        u32 blendShapesRotationDeformers [[name("Blend Shapes (Rotation Deformers)")]];
+        u32 blendShapesGlue [[name("Blend Shapes (Glue)")]];
     }
 };
 
@@ -491,7 +491,7 @@ struct SectionOffsetTable<auto V> {
         ArtMeshOffsetsV4_2<countInfo.artMeshes> artMeshesV4_2 [[name("Art Meshes (V4_02_00+)")]];
         KeyformColorOffsets<countInfo.keyformMultiplyColors> keyformMultiplyColors [[name("Keyform Colors (Multiply)")]];
         KeyformColorOffsets<countInfo.keyformScreenColors> keyformScreenColors [[name("Keyform Colors (Screen)")]];
-        ParameterOffsetsV4_2<countInfo.parameters> parameterOffsetsV4_2 [[name("Parameters (V4_02_00+)")]];
+        ParameterOffsetsV4_2<countInfo.parameters> parametersV4_2 [[name("Parameters (V4_02_00+)")]];
         BlendShapeParameterBindingOffsets<countInfo.blendShapeParameterBindings> blendShapeParameterBindings [[name("Blend Shape Parameter Bindings")]];
         BlendShapeKeyformBindingOffsets<countInfo.blendShapeKeyformBindings> blendShapeKeyformBindings [[name("Blend Shape Keyform Bindings")]];
         BlendShapeOffsets<countInfo.blendShapesWarpDeformers> blendShapesWarpDeformers [[name("Blend Shapes (Warp Deformers)")]];
@@ -499,6 +499,12 @@ struct SectionOffsetTable<auto V> {
         BlendShapeConstraintIndicesOffsets<countInfo.blendShapeConstraintIndices> blendShapeConstraintIndices [[name("Blend Shape Constraints Indices")]];
         BlendShapeConstraintOffsets<countInfo.blendShapeConstraints> blendShapeConstraints [[name("Blend Shape Constraints")]];
         BlendShapeConstraintValueOffsets<countInfo.blendShapeConstraintValues> blendShapeConstraintValues [[name("Blend Shape Constraint Values")]];
+    }
+
+    if (V >= Version::V5_00_00) {
+        BlendShapeOffsets<countInfo.blendShapesParts> blendShapesParts [[name("Blend Shapes (Parts)")]];
+        BlendShapeOffsets<countInfo.blendShapesRotationDeformers> blendShapesRotationDeformers [[name("Blend Shapes (Rotation Deformers)")]];
+        BlendShapeOffsets<countInfo.blendShapesGlue> blendShapesGlue [[name("Blend Shapes (Glue)")]];
     }
 };
 
@@ -519,48 +525,3 @@ Header header @ 0x0 [[name("MOC3 Header")]];
 
 SectionOffsetTable<header.version> sections @ 0x40 [[name("Section Offset Table")]];
 RuntimeAddressMap runtimeAddressMap @ 0x2c0 [[name("Runtime Address Map")]];
-
-#ifndef NO_VERIFICATION
-    #include <std/sys.pat>
-    #include <std/string.pat>
-    fn checkIndices(u128 indices, u32 count, u32 len) {
-        s32 iV[count] @ indices;
-        for (u32 i = 0, i < count, i += 1) {
-            std::assert((iV[i] > -2 && iV[i] < len), "Out of bounds index: " +
-                std::string::to_string(i) + "] = (" + std::string::to_string(iV[i]) + ") of (" +
-                std::string::to_string(indices) + ")");
-        }
-    };
-    
-    fn checkBeginIndices(u128 indices, u128 counts, u32 count, u32 len) {
-        s32 iV[count] @ indices;
-        s32 iC[count] @ counts;
-        for (u32 i = 0, i < count, i += 1) {
-            std::assert((iV[i] > -2 && (iV[i] + iC[i]) <= len), "Out of bounds begin index: [" +
-                std::string::to_string(i) + "] = (" + std::string::to_string(iV[i]) + ", " + std::string::to_string(iC[i]) +
-                ") of (" + std::string::to_string(indices) + "," + std::string::to_string(counts) + ")");
-            std::assert(iC[i] >= 0 && iC[i] < len, "Out of bounds count: [" +
-                std::string::to_string(i) + "] = (" + std::string::to_string(iV[i]) + ", " + std::string::to_string(iC[i]) +
-                ") of (" + std::string::to_string(indices) + "," + std::string::to_string(counts) + ")");
-        }
-    };
-    
-    if (EnableVerification) {
-        CountInfoTable<header.version> cI = sections.countInfo;
-        checkIndices(addressof(sections.parts.keyformBindingSourcesIndices), cI.parts, cI.keyformBindings);
-        checkBeginIndices(addressof(sections.parts.keyformSourcesBeginIndices), 
-                          addressof(sections.parts.keyformSourcesCounts), cI.parts, cI.partKeyforms);
-        
-        checkIndices(addressof(sections.deformers.keyformBindingSourcesIndices), cI.deformers, cI.keyformBindings);
-        checkIndices(addressof(sections.deformers.parentPartIndices), cI.deformers, cI.parts);
-        checkIndices(addressof(sections.deformers.parentDeformerIndices), cI.deformers, cI.deformers);
-        // TODO: sections.deformers.specificSourcesIndices (not sure how)
-        
-        checkIndices(addressof(sections.warpDeformers.keyformBindingSourcesIndices), cI.warpDeformers, cI.keyformBindings);
-        checkBeginIndices(addressof(sections.warpDeformers.keyformSourcesBeginIndices), 
-                          addressof(sections.warpDeformers.keyformSourcesCounts), cI.warpDeformers, cI.warpDeformerKeyforms);
-    }
-#endif
-
-
-
