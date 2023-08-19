@@ -109,9 +109,9 @@ struct CanvasInfo {
 
 struct CountInfoTable<auto V> {
     if (V >= Version::V5_00_00)
-        padding[128] [[no_unique_address]];
-    else
         padding[256] [[no_unique_address]];
+    else
+        padding[128] [[no_unique_address]];
 
     u32 parts [[name("Parts")]];
     u32 deformers [[name("Deformers")]];
