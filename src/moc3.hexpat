@@ -1,5 +1,5 @@
 /*
- * MOC3 Format Specification, 2.1
+ * MOC3 Format Specification, 2.1a
  *
  * Copyright (C) 2023 The OpenL2D Project Developers
  *
@@ -21,6 +21,7 @@
  * 2.0b - Experimental support for verification.
  * 2.0c - New FIXUP attribute to support more MOC3 files.
  * 2.1 - Support for version 5 MOC3 features.
+ * 2.1a - Correction to version 5 structures.
  */
 
 #pragma MIME application/x-moc3-data
@@ -450,6 +451,21 @@ struct BlendShapeConstraintValueOffsets<auto N> {
     float* weights[N] : u32 [[name("Weights"), FIXUP]];
 };
 
+struct WarpDeformerKeyformOffsetsV5_0<auto N> {
+    s32* keyformMultiplyColorSourcesBeginIndices[N] : u32 [[name("Keyform Multiply Color Sources Begin Indices"), FIXUP]];
+    s32* keyformScreenColorSourcesBeginIndices[N] : u32 [[name("Keyform Screen Color Sources Begin Indices"), FIXUP]];
+};
+
+struct RotationDeformerKeyformOffsetsV5_0<auto N> {
+    s32* keyformMultiplyColorSourcesBeginIndices[N] : u32 [[name("Keyform Multiply Color Sources Begin Indices"), FIXUP]];
+    s32* keyformScreenColorSourcesBeginIndices[N] : u32 [[name("Keyform Screen Color Sources Begin Indices"), FIXUP]];
+};
+
+struct ArtMeshKeyformOffsetsV5_0<auto N> {
+    s32* keyformMultiplyColorSourcesBeginIndices[N] : u32 [[name("Keyform Multiply Color Sources Begin Indices"), FIXUP]];
+    s32* keyformScreenColorSourcesBeginIndices[N] : u32 [[name("Keyform Screen Color Sources Begin Indices"), FIXUP]];
+};
+
 struct SectionOffsetTable<auto V> {
     padding[0x280] [[no_unique_address]];
 
@@ -502,6 +518,10 @@ struct SectionOffsetTable<auto V> {
     }
 
     if (V >= Version::V5_00_00) {
+        WarpDeformerKeyformOffsetsV5_0<countInfo.warpDeformerKeyforms> warpDeformerKeyformsV5_0 [[name("Warp Deformer Keyforms (V5_00_00+)")]];
+        RotationDeformerKeyformOffsetsV5_0<countInfo.rotationDeformerKeyforms> rotationDeformerKeyformsV5_0 [[name("Rotation Deformer Keyforms (V5_00_00+)")]];
+        ArtMeshKeyformOffsetsV5_0<countInfo.artMeshKeyforms> artMeshKeyformsV5_0 [[name("Art Mesh Keyforms (V5_00_00+)")]];
+    
         BlendShapeOffsets<countInfo.blendShapesParts> blendShapesParts [[name("Blend Shapes (Parts)")]];
         BlendShapeOffsets<countInfo.blendShapesRotationDeformers> blendShapesRotationDeformers [[name("Blend Shapes (Rotation Deformers)")]];
         BlendShapeOffsets<countInfo.blendShapesGlue> blendShapesGlue [[name("Blend Shapes (Glue)")]];
