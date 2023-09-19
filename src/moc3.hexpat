@@ -1,5 +1,5 @@
 /*
- * MOC3 Format Specification, 2.1a
+ * MOC3 Format Specification, 2.1b
  *
  * Copyright (C) 2023 The OpenL2D Project Developers
  *
@@ -22,6 +22,7 @@
  * 2.0c - New FIXUP attribute to support more MOC3 files.
  * 2.1 - Support for version 5 MOC3 features.
  * 2.1a - Correction to version 5 structures.
+ * 2.1b - Correction to field order in BlendShapeKeyformBindingOffsets structure.
  */
 
 #pragma MIME application/x-moc3-data
@@ -424,10 +425,10 @@ struct BlendShapeParameterBindingOffsets<auto N> {
 
 struct BlendShapeKeyformBindingOffsets<auto N> {
     s32* parameterBindingSourcesIndices[N] : u32 [[name("Parameter Binding Sources Indices"), FIXUP]];
-    s32* blendShapeConstraintIndexSourcesBeginIndices[N] : u32 [[name("Blend Shape Constraint Index Sources Begin Indices"), FIXUP]];
-    s32* blendShapeConstraintIndexSourcesCounts[N] : u32 [[name("Blend Shape Constraint Index Sources Counts"), FIXUP]];
     s32* keyformSourcesBlendShapeIndices[N] : u32 [[name("Keyform Sources Blend Shape Indices"), FIXUP]];
     s32* keyformSourcesBlendShapeCounts[N] : u32 [[name("Keyform Sources Blend Shape Counts"), FIXUP]];
+    s32* blendShapeConstraintIndexSourcesBeginIndices[N] : u32 [[name("Blend Shape Constraint Index Sources Begin Indices"), FIXUP]];
+    s32* blendShapeConstraintIndexSourcesCounts[N] : u32 [[name("Blend Shape Constraint Index Sources Counts"), FIXUP]];
 };
 
 struct BlendShapeOffsets<auto N> {
